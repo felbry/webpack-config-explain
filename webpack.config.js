@@ -3,21 +3,30 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
 
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+
 module.exports = {
-    entry: './src/main.js',
+    entry: {
+        app: './src/main.js',
+        vendor: ['vue', 'vue-router']
+    },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'build.js'
+        filename: '[name].[chunkhash].js'
     },
-    devServer: {
-        contentBase: './dist',
-        hot: true
-    },
+    // devServer: {
+    //     contentBase: './dist',
+    //     hot: true
+    // },
     module: {
         rules: [
             {
                 test: /\.css$/,
-                use: ['style-loader', 'css-loader']
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: 'css-loader'
+                })
             },
             {
                 test: /\.js$/,
@@ -60,7 +69,14 @@ module.exports = {
             },
             {
                 test: /\.vue$/,
-                use: ['vue-loader']
+                use: [
+                    {
+                        loader: 'vue-loader',
+                        options: {
+                            extractCSS: true
+                        }
+                    }
+                ]
             },
         ]
     },
@@ -72,7 +88,15 @@ module.exports = {
             inject: true
         }),
         new CleanWebpackPlugin(['dist']),
-        new webpack.HotModuleReplacementPlugin()
+        // new webpack.HotModuleReplacementPlugin(),
+        new ExtractTextPlugin({
+            filename: '[name].[contenthash].css'
+        }),
+        new webpack.optimize.CommonsChunkPlugin({
+            names: ['vendor', 'runtime']
+        }),
+        new webpack.HashedModuleIdsPlugin(),
+        new UglifyJSPlugin(),
     ],
     resolve: {
         extensions: ['.js', '.vue'],
