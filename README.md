@@ -53,7 +53,7 @@
         }
         ```
 
-        - file-loader与url-loader并存的怪异现象（在vue-loader存在的前提下）
+    - file-loader与url-loader并存的怪异现象（在vue-loader存在的前提下）
 
         起初配置如下
 
@@ -132,6 +132,7 @@
     - devDependencies
         - extract-text-webpack-plugin（提取css文件）
         - uglifyjs-webpack-plugin
+        - babel-preset-es2015（对babel-preset-stage-2标准的更新）
 
 3. 配置`webpack.config.js`文件
 
